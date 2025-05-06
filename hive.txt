@@ -1,0 +1,36 @@
+hive
+create database folder1;
+use folder1;
+create table flight(fno int,source varchar(18),year int , delay float);
+alter table flight rename to air_flight;
+alter table air_flight add columns(dest varchar(10));
+drop table flight;
+create table flight (fno int,source varchar(10), year int,delay float)
+row format delimited
+fields terminated by ','
+lines terminated by '\n'
+stored as textfile;
+insert into flight values(215,"pune",2023,15.00);
+select * from flight;
+
+gedit ipp.txt
+
+load data local inpath "ipp.txt"
+overwrite into table flight;
+
+create table nflight (fno int,dest varchar(10), year int)
+row format delimited
+fields terminated by ','
+lines terminated by '\n'
+stored as textfile;
+insert into nflight values(215,"mumbai",2023);
+select a.fno,a.source,a.year,a.delay,b.dest
+from flight a join nflight b on(a.fno=b.fno);
+
+create index idx_fno
+on table flight(fno)
+as 'compact'
+with deferred rebuild;
+alter index idx_fno on flight rebuild;
+select * from flight;
+select avg(delay) as avg_delay from flight;
